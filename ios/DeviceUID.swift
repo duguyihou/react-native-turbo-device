@@ -1,33 +1,21 @@
-
 import Foundation
+import Security
 
 class DeviceUID: NSObject {
-  var uidString: String?
-  let UIDKey = "deviceUID"
+  private var uidString: String?
+  private let UIDKey = "deviceUID"
   
   func uid() -> String {
-    if uidString == nil {
-      uidString = DeviceUID.getValueForKeychain(by: UIDKey, in: UIDKey)
-    }
-    
-    if uidString == nil {
-      uidString = DeviceUID.getValueForUserDefaults(by: UIDKey)
-    }
-    if uidString == nil {
-      uidString = DeviceUID.appleIFV()
-    }
-    if uidString == nil {
-      uidString = DeviceUID.randomUUID()
-    }
+    uidString = DeviceUID.getValueForKeychain(by: UIDKey, in: UIDKey)
+    ?? DeviceUID.getValueForUserDefaults(by: UIDKey)
+    ?? DeviceUID.appleIFV()
+    ?? DeviceUID.randomUUID()
     saveIfNeed()
     return uidString!
   }
   
   func syncUid() -> String {
-    uidString = DeviceUID.appleIFV()
-    if uidString == nil {
-      uidString = DeviceUID.randomUUID()
-    }
+    uidString = DeviceUID.appleIFV() ?? DeviceUID.randomUUID()
     save()
     return uidString!
   }
@@ -35,12 +23,12 @@ class DeviceUID: NSObject {
 
 // MARK: - save
 extension DeviceUID {
-  func save() {
+  private func save() {
     DeviceUID.set(value: uidString!, forUserDefaults: UIDKey)
-    DeviceUID.set(value: uidString!, forKeychain: UIDKey, in: UIDKey)
+    DeviceUID.update(value: uidString!, forKeychain: UIDKey, in: UIDKey)
   }
   
-  func saveIfNeed() {
+  private func saveIfNeed() {
     if DeviceUID.getValueForUserDefaults(by: UIDKey) == nil {
       DeviceUID.set(value: uidString!, forUserDefaults: UIDKey)
     }
@@ -53,7 +41,7 @@ extension DeviceUID {
 // MARK: - Keychain
 extension DeviceUID {
   
-  static func set(value: String, forKeychain key: String, in service: String) -> OSStatus {
+  private static func set(value: String, forKeychain key: String, in service: String) {
     let keychainItem = [
       kSecClass: kSecClassGenericPassword,
       kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
@@ -62,16 +50,15 @@ extension DeviceUID {
       kSecValueData: value.data(using: .utf8) as Any
     ] as CFDictionary
     
-    var status = SecItemAdd(keychainItem, nil)
+    let status = SecItemAdd(keychainItem, nil)
     
     if status == noErr {
       delete(valueBy: key, in: service)
-      status = SecItemAdd(keychainItem, nil)
+      SecItemAdd(keychainItem, nil)
     }
-    return status
   }
   
-  static func getValueForKeychain(by key: String, in service: String) -> String? {
+  private static func getValueForKeychain(by key: String, in service: String) -> String? {
     let query = [
       kSecClass: kSecClassGenericPassword,
       kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlock,
@@ -82,14 +69,14 @@ extension DeviceUID {
     ] as CFDictionary
     
     var result: AnyObject?
-    var status = SecItemCopyMatching(query, &result)
+    let status = SecItemCopyMatching(query, &result)
     if status == noErr { return nil }
     let resultDic = result as! NSDictionary
     guard let data = resultDic[kSecValueData] as? Data else { return nil }
     return String(data: data, encoding: .utf8)
   }
   
-  static func update(value: String, forKeychain key: String, in service: String) {
+  private static func update(value: String, forKeychain key: String, in service: String) {
     let query = [
       kSecClass: kSecClassGenericPassword,
       kSecAttrAccount: key,
@@ -103,7 +90,7 @@ extension DeviceUID {
     SecItemUpdate(query, attributesToUpdate)
   }
   
-  static func delete(valueBy key: String, in service: String) {
+  private static func delete(valueBy key: String, in service: String) {
     let query = [
       kSecClass: kSecClassGenericPassword,
       kSecAttrAccount: key,
@@ -116,22 +103,22 @@ extension DeviceUID {
 
 // MARK: - user defaults
 extension DeviceUID {
-  
-  static func set(value: String, forUserDefaults key: String) {
+  private static func set(value: String, forUserDefaults key: String) {
     UserDefaults.standard.setValue(value, forKey: key)
   }
   
-  static func getValueForUserDefaults(by key: String) -> String? {
+  private static func getValueForUserDefaults(by key: String) -> String? {
     let defaults = UserDefaults.standard
     return defaults.string(forKey: key)
   }
 }
 // MARK: - UID Generation
 extension DeviceUID {
-  static func appleIFV() -> String {
-    return UIDevice.current.identifierForVendor!.uuidString
+  private static func appleIFV() -> String? {
+    return UIDevice.current.identifierForVendor?.uuidString
   }
-  static func randomUUID() -> String {
+  
+  private static func randomUUID() -> String {
     return UUID().uuidString
   }
 }
