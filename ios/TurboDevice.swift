@@ -1,4 +1,7 @@
 import AVFoundation
+import CoreTelephony
+import MachO
+import CoreLocation
 #if !os(tvOS)
 import WebKit
 import LocalAuthentication
@@ -123,11 +126,11 @@ extension TurboDevice {
   }
   
   private func isEmulator() -> Bool {
-    #if targetEnvironment(simulator)
+#if targetEnvironment(simulator)
     return true
-    #else
+#else
     return false
-    #endif
+#endif
   }
   
   private func getAppName() -> Any {
@@ -248,14 +251,98 @@ extension TurboDevice {
   }
   
   private func getBrightness() -> CGFloat {
-    #if !os(tvOS)
+#if !os(tvOS)
     return UIScreen.main.brightness
-    #else
+#else
     return CGFloat(-1)
-    #endif
+#endif
   }
 }
 
+// MARK: - storage
+extension TurboDevice {
+  
+  private func getTotalDiskCapacity() -> Double {
+    let storage = getStorage()
+    let fileSystemSize = storage[.systemSize] as! Int
+    let totalSpace = UInt64(fileSystemSize)
+    return Double(totalSpace)
+  }
+  
+  private func getFreeDiskStorage() -> Double {
+    let storage = getStorage()
+    let fileSystemSize = storage[.systemFreeSize] as! Int
+    let freeSpace = UInt64(fileSystemSize)
+    return Double(freeSpace)
+  }
+  
+  private func getTotalMemory() -> Double {
+    let totalMemory = ProcessInfo.processInfo.physicalMemory
+    return Double(totalMemory)
+  }
+  private func getUsedMemory() -> UInt64 {
+    // TODO: - 🐵 todo
+    return UInt64()
+  }
+  
+  private func getStorage() -> [FileAttributeKey : Any] {
+    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+    let storage = try! FileManager.default.attributesOfFileSystem(forPath: paths.last!)
+    // TODO: - 🐵 catch
+    return storage
+  }
+}
+
+extension TurboDevice {
+  private func getSupportedAbis() -> [String] {
+    let archInfo = NXGetLocalArchInfo() // MARK: - deprecated in iOS 16
+    // TODO: - 🐵 todo
+    return [""]
+  }
+  
+  
+}
+// MARK: - location
+extension TurboDevice {
+  private func isLocationEnabled() -> Bool {
+    return CLLocationManager.locationServicesEnabled()
+  }
+  private func getAvailableLocationProviders() -> [String: Any] {
+#if !os(tvOS)
+    let locationServicesEnabled = isLocationEnabled()
+    let significantLocationChangeMonitoringAvailable = CLLocationManager.significantLocationChangeMonitoringAvailable()
+    let headingAvailable = CLLocationManager.headingAvailable()
+    let isRangingAvailable = CLLocationManager.isRangingAvailable()
+    return [
+      "locationServicesEnabled": locationServicesEnabled,
+      "significantLocationChangeMonitoringAvailable": significantLocationChangeMonitoringAvailable,
+      "headingAvailable": headingAvailable,
+      "isRangingAvailable": isRangingAvailable,
+    ]
+#else
+    let locationServicesEnabled = isLocationEnabled()
+    return [
+      "locationServicesEnabled": locationServicesEnabled,
+    ]
+#endif
+  }
+}
+
+extension TurboDevice {
+  private func getCarrier() -> String {
+    
+#if os(tvOS) || targetEnvironment(macCatalyst)
+    return "unknown"
+#else
+    let netInfo = CTTelephonyNetworkInfo()
+    if #available(iOS 12.0, *) {
+      return  netInfo.serviceSubscriberCellularProviders?["home"]?.carrierName ?? "unknown" // TODO: - 🐵 not sure home
+    } else {
+      return netInfo.subscriberCellularProvider?.carrierName ?? "unknown"
+    }
+#endif
+  }
+}
 extension TurboDevice {
   private func getDeviceType() -> DeviceType {
     let userInterfaceIdiom = UIDevice.current.userInterfaceIdiom
@@ -279,5 +366,22 @@ extension TurboDevice {
     default:
       return .Unknown
     }
+  }
+  
+  private func isPinOrFingerprintSet() -> Bool {
+    #if os(tvOS)
+    return false
+    #else
+    let context = LAContext()
+    return context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
+    #endif
+  }
+  
+  private func getFirstInstallTime() {
+    let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last
+    let path = String(url)
+    let installDate: Date = FileManager.default.attributesOfItem(atPath: path)[.creationDate]
+    
+    return installDate.timeIntervalSince1970 * 1000
   }
 }
