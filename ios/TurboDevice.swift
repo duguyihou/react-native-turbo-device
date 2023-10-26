@@ -68,31 +68,37 @@ class TurboDevice: RCTEventEmitter {
   }
 }
 
+// MARK: - isEmulator
 extension TurboDevice {
-
-  private func isEmulator() -> Bool {
+  
+  @objc
+  func isEmulator(_ resolve: @escaping RCTPromiseResolveBlock,
+                  reject: @escaping RCTPromiseRejectBlock) {
 #if targetEnvironment(simulator)
-    return true
+    resolve(true)
 #else
-    return false
+    resolve(false)
 #endif
   }
 }
 
+// MARK: - getFirstInstallTime
 extension TurboDevice {
-  private func getFirstInstallTime() -> Int64? {
+  @objc
+  func getFirstInstallTime(_ resolve: @escaping RCTPromiseResolveBlock,
+                           reject: @escaping RCTPromiseRejectBlock) {
     guard let path = FileManager.default.urls(for:
         .documentDirectory,in:
         .userDomainMask).last
-    else { return nil }
+    else { return reject("getFirstInstallTime", nil, nil) }
     var installDate: Date?
     do {
       let attributesOfItem = try FileManager.default.attributesOfItem(atPath: path.absoluteString)
       installDate = attributesOfItem[.creationDate] as? Date
     } catch {
-      print("🐵 ---- error")
+      reject("getFirstInstallTime", nil, nil)
     }
-    return Int64(installDate!.timeIntervalSince1970 * 1000)
+    resolve(Int64(installDate!.timeIntervalSince1970 * 1000))
   }
 }
 

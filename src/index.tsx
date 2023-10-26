@@ -84,3 +84,11 @@ export function getSupportedAbis(): Promise<string> {
 export function isPinOrFingerprintSet(): Promise<boolean> {
   return TurboDevice.isPinOrFingerprintSet();
 }
+
+export function isEmulator(): Promise<boolean> {
+  return TurboDevice.isEmulator();
+}
+
+export function getFirstInstallTime(): Promise<number> {
+  return TurboDevice.getFirstInstallTime();
+}

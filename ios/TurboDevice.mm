@@ -73,5 +73,11 @@ RCT_EXTERN_METHOD(getSupportedAbis:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(isPinOrFingerprintSet:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
+# pragma mark others
+
+RCT_EXTERN_METHOD(isEmulator:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getFirstInstallTime:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 
 @end
