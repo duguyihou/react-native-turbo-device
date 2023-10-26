@@ -80,3 +80,7 @@ export function getUserAgent(): Promise<string> {
 export function getSupportedAbis(): Promise<string> {
   return TurboDevice.getSupportedAbis();
 }
+
+export function isPinOrFingerprintSet(): Promise<boolean> {
+  return TurboDevice.isPinOrFingerprintSet();
+}

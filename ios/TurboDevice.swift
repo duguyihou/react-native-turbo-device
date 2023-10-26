@@ -1,8 +1,4 @@
 import AVFoundation
-import CoreLocation
-#if !os(tvOS)
-import LocalAuthentication
-#endif
 
 @objc(TurboDevice)
 class TurboDevice: RCTEventEmitter {
@@ -84,15 +80,6 @@ extension TurboDevice {
 }
 
 extension TurboDevice {
-  
-  private func isPinOrFingerprintSet() -> Bool {
-#if os(tvOS)
-    return false
-#else
-    return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
-#endif
-  }
-  
   private func getFirstInstallTime() -> Int64? {
     guard let path = FileManager.default.urls(for:
         .documentDirectory,in:
@@ -107,7 +94,5 @@ extension TurboDevice {
     }
     return Int64(installDate!.timeIntervalSince1970 * 1000)
   }
-  
-
 }
 

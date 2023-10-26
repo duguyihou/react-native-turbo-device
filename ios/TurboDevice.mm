@@ -68,5 +68,10 @@ RCT_EXTERN_METHOD(getUserAgent:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getSupportedAbis:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
+# pragma mark localAuthentication
+
+RCT_EXTERN_METHOD(isPinOrFingerprintSet:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
 
 @end
