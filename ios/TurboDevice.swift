@@ -155,69 +155,6 @@ extension TurboDevice {
 // MARK: - battery
 extension TurboDevice {
   
-  var powerState: [String:Any] {
-    
-#if RCT_DEV && !targetEnvironment(simulator) && !os(tvOS)
-    if !UIDevice.current.isBatteryMonitoringEnabled {
-      RCTLogWarn("Battery monitoring is not enabled. You need to enable monitoring with `UIDevice.current.isBatteryMonitoringEnabled = true`")
-    }
-#endif
-#if RCT_DEV && targetEnvironment(simulator) && !os(tvOS)
-    if UIDevice.current.batteryState == .unknown {
-      RCTLogWarn("Battery state `unknown` and monitoring disabled, this is normal for simulators and tvOS.")
-    }
-#endif
-    let batteryLevel = getBatteryLevel()
-#if os(tvOS)
-    return [
-      "batteryLevel": batteryLevel,
-      "batteryState": "full"
-    ]
-#else
-    let batteryState = {
-      let state = UIDevice.current.batteryState
-      switch state {
-      case .full:
-        return "full"
-      case .charging:
-        return "charging"
-      case .unplugged:
-        return "unplugged"
-      default:
-        return "unknown"
-      }
-    }()
-    let lowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
-    return [
-      "batteryLevel": batteryLevel,
-      "batteryState": batteryState,
-      "lowPowerMode": lowPowerMode,
-    ]
-#endif
-  }
-  @objc
-  private func batteryLevelDidChange(_ notification: Notification) {
-    let batteryLevel = getBatteryLevel()
-    sendEvent(withName: "TurboDevice_batteryLevelDidChange", body: [batteryLevel])
-    
-    if batteryLevel <= kLowBatteryThreshold {
-      sendEvent(withName: "TurboDevice_batteryLevelIsLow", body: [batteryLevel])
-    }
-  }
-  
-  private func getBatteryLevel() -> Float {
-#if os(tvOS)
-    return Float(1)
-#else
-    return UIDevice.current.batteryLevel
-#endif
-  }
-  
-  @objc
-  private func powerStateDidChange() {
-    sendEvent(withName: "TurboDevice_powerStateDidChange", body: [powerState])
-  }
-  
   @objc
   private func headphoneConnectionDidChange() {
     let isConnected = isHeadphonesConnected()
@@ -225,10 +162,7 @@ extension TurboDevice {
     
   }
   
-  @objc
-  private func isBatteryCharging() -> Bool {
-    return powerState["batteryState"] as! UIDevice.BatteryState == .charging
-  }
+
   
   private func isHeadphonesConnected() -> Bool {
     let currentRoute = AVAudioSession.sharedInstance().currentRoute

@@ -36,3 +36,11 @@ export function getTotalMemory(): Promise<number> {
 export function getUsedMemory(): Promise<number> {
   return TurboDevice.getUsedMemory();
 }
+
+export function getBatteryLevel(): Promise<number> {
+  return TurboDevice.getBatteryLevel();
+}
+
+export function isBatteryCharging(): Promise<boolean> {
+  return TurboDevice.isBatteryCharging();
+}

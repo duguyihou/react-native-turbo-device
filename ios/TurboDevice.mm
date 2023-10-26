@@ -22,4 +22,11 @@ RCT_EXTERN_METHOD(getTotalMemory:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getUsedMemory:(RCTPromiseResolveBlock)resolve 
                   reject:(RCTPromiseRejectBlock)reject)
 
+# pragma mark battery
+
+RCT_EXTERN_METHOD(getBatteryLevel:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(isBatteryCharging:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 @end

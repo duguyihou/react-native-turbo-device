@@ -1,5 +1,5 @@
 import Foundation
-
+// MARK: - disk
 extension TurboDevice {
   @objc
   func getTotalDiskCapacity(_ resolve: @escaping RCTPromiseResolveBlock,
@@ -30,6 +30,7 @@ extension TurboDevice {
   }
 }
 
+// MARK: - memory
 extension TurboDevice {
   @objc
   private func getTotalMemory(_ resolve: @escaping RCTPromiseResolveBlock,
