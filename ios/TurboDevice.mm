@@ -27,29 +27,34 @@ RCT_EXTERN_METHOD(getUsedMemory:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getBatteryLevel:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(isBatteryCharging:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject)
 
 # pragma mark network
 
 RCT_EXTERN_METHOD(getCarrier:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(getIpAddress:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject)
 
 # pragma mark location
 
 RCT_EXTERN_METHOD(isLocationEnabled:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(getAvailableLocationProviders:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject)
 
 # pragma mark headphone
 
 RCT_EXTERN_METHOD(isHeadphonesConnected:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject)
 
 # pragma mark brightness
 
 RCT_EXTERN_METHOD(getBrightness:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject)
+
+# pragma mark typography
+RCT_EXTERN_METHOD(getFontScale:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
 @end

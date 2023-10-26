@@ -85,10 +85,6 @@ extension TurboDevice {
   }
 }
 
-
-
-
-
 extension TurboDevice {
   private func getSupportedAbis() -> String {
     guard let archRaw = NXGetLocalArchInfo().pointee.name else { return "unknown" }
@@ -119,41 +115,6 @@ extension TurboDevice {
       print("🐵 ---- error")
     }
     return Int64(installDate!.timeIntervalSince1970 * 1000)
-  }
-  
-  private func getFontScale() -> Double {
-    let contentSize = UIScreen.main.traitCollection.preferredContentSizeCategory
-    let fontScale = {
-      switch contentSize {
-      case .extraSmall:
-        return 0.82
-      case .small:
-        return 0.88
-      case .medium:
-        return 0.95
-      case .large:
-        return 1.0
-      case .extraLarge:
-        return 1.12
-      case .extraExtraLarge:
-        return 1.23
-      case .extraExtraExtraLarge:
-        return 1.35
-      case .accessibilityMedium:
-        return 1.64
-      case .accessibilityLarge:
-        return 1.95
-      case .accessibilityExtraLarge:
-        return 2.35
-      case .accessibilityExtraExtraLarge:
-        return 2.76
-      case .accessibilityExtraExtraExtraLarge:
-        return 3.12
-      default:
-        return 1.0
-      }
-    }()
-    return fontScale
   }
   
   private func getUserAgent() -> String {

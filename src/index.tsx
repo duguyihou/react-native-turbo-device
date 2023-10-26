@@ -68,3 +68,7 @@ export function isHeadphonesConnected(): Promise<boolean> {
 export function getBrightness(): Promise<number> {
   return TurboDevice.getBrightness();
 }
+
+export function getFontScale(): Promise<number> {
+  return TurboDevice.getFontScale();
+}
