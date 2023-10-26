@@ -53,10 +53,14 @@ export function getIpAddress(): Promise<string> {
   return TurboDevice.getIpAddress();
 }
 
-export function isLocationEnabled(): Promise<string> {
+export function isLocationEnabled(): Promise<boolean> {
   return TurboDevice.isLocationEnabled();
 }
 
-export function getAvailableLocationProviders(): Promise<string> {
+export function getAvailableLocationProviders(): Promise<Array<string>> {
   return TurboDevice.getAvailableLocationProviders();
+}
+
+export function isHeadphonesConnected(): Promise<boolean> {
+  return TurboDevice.isHeadphonesConnected();
 }

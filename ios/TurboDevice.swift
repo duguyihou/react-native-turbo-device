@@ -1,5 +1,3 @@
-import AVFoundation
-
 import MachO
 import CoreLocation
 #if !os(tvOS)
@@ -86,26 +84,7 @@ extension TurboDevice {
   }
 }
 
-extension TurboDevice {
-  
-  @objc
-  private func headphoneConnectionDidChange() {
-    let isConnected = isHeadphonesConnected()
-    sendEvent(withName: "TurboDevice_headphoneConnectionDidChange", body: [isConnected])
-    
-  }
-  
-  private func isHeadphonesConnected() -> Bool {
-    let currentRoute = AVAudioSession.sharedInstance().currentRoute
-    for desc in currentRoute.outputs {
-      let portType = desc.portType
-      if portType == .headphones || portType == .bluetoothA2DP || portType == .bluetoothHFP {
-        return true
-      }
-    }
-    return false
-  }
-}
+
 
 // MARK: - brightness
 extension TurboDevice {

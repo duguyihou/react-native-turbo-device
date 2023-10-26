@@ -42,4 +42,10 @@ RCT_EXTERN_METHOD(isLocationEnabled:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(getAvailableLocationProviders:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
+
+# pragma mark headphone
+
+RCT_EXTERN_METHOD(isHeadphonesConnected:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
 @end
