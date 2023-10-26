@@ -20,3 +20,19 @@ const TurboDevice = NativeModules.TurboDevice
 export function multiply(a: number, b: number): Promise<number> {
   return TurboDevice.multiply(a, b);
 }
+
+export function getTotalDiskCapacity(): Promise<number> {
+  return TurboDevice.getTotalDiskCapacity();
+}
+
+export function getFreeDiskStorage(): Promise<number> {
+  return TurboDevice.getFreeDiskStorage();
+}
+
+export function getTotalMemory(): Promise<number> {
+  return TurboDevice.getTotalMemory();
+}
+
+export function getUsedMemory(): Promise<number> {
+  return TurboDevice.getUsedMemory();
+}

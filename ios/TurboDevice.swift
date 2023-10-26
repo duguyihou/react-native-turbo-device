@@ -35,7 +35,7 @@ class TurboDevice: RCTEventEmitter {
   
   var hasListeners: Bool?
 #if !os(tvOS)
-  let lowBatteryThreshold: Float = 0.2
+  let kLowBatteryThreshold: Float = 0.2
 #endif
   
   override func supportedEvents() -> [String]! {
@@ -200,7 +200,7 @@ extension TurboDevice {
     let batteryLevel = getBatteryLevel()
     sendEvent(withName: "TurboDevice_batteryLevelDidChange", body: [batteryLevel])
     
-    if batteryLevel <= lowBatteryThreshold {
+    if batteryLevel <= kLowBatteryThreshold {
       sendEvent(withName: "TurboDevice_batteryLevelIsLow", body: [batteryLevel])
     }
   }
@@ -261,46 +261,30 @@ extension TurboDevice {
 
 // MARK: - storage
 extension TurboDevice {
-  
-  private func getTotalDiskCapacity() -> Double {
-    let storage = getStorage()
-    let fileSystemSize = storage[.systemSize] as! Int
-    let totalSpace = UInt64(fileSystemSize)
-    return Double(totalSpace)
-  }
-  
-  private func getFreeDiskStorage() -> Double {
-    let storage = getStorage()
-    let fileSystemSize = storage[.systemFreeSize] as! Int
-    let freeSpace = UInt64(fileSystemSize)
-    return Double(freeSpace)
-  }
-  
   private func getTotalMemory() -> Double {
     let totalMemory = ProcessInfo.processInfo.physicalMemory
     return Double(totalMemory)
   }
   private func getUsedMemory() -> UInt64 {
-    // TODO: - 🐵 todo
-    return UInt64()
-  }
-  
-  private func getStorage() -> [FileAttributeKey : Any] {
-    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-    let storage = try! FileManager.default.attributesOfFileSystem(forPath: paths.last!)
-    // TODO: - 🐵 catch
-    return storage
+    var taskInfo = mach_task_basic_info()
+    var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
+    let kerr: kern_return_t = withUnsafeMutablePointer(to: &taskInfo) {
+      $0.withMemoryRebound(to: integer_t.self, capacity: 1) {
+        task_info(mach_task_self_, task_flavor_t(MACH_TASK_BASIC_INFO), $0, &count)
+      }
+    }
+    if  kerr != KERN_SUCCESS {
+      return 0
+    }
+    return UInt64(taskInfo.resident_size)
   }
 }
 
 extension TurboDevice {
-  private func getSupportedAbis() -> [String] {
-    let archInfo = NXGetLocalArchInfo() // MARK: - deprecated in iOS 16
-    // TODO: - 🐵 todo
-    return [""]
+  private func getSupportedAbis() -> String {
+    guard let archRaw = NXGetLocalArchInfo().pointee.name else { return "unknown" }
+    return String(cString: archRaw)
   }
-  
-  
 }
 // MARK: - location
 extension TurboDevice {
@@ -336,11 +320,43 @@ extension TurboDevice {
 #else
     let netInfo = CTTelephonyNetworkInfo()
     if #available(iOS 12.0, *) {
-      return  netInfo.serviceSubscriberCellularProviders?["home"]?.carrierName ?? "unknown" // TODO: - 🐵 not sure home
+      return  netInfo.serviceSubscriberCellularProviders?.first?.value.carrierName ?? "unknown"
     } else {
       return netInfo.subscriberCellularProvider?.carrierName ?? "unknown"
     }
 #endif
+  }
+  // copy from https://stackoverflow.com/a/73853838
+  private func getIpAddress() -> String? {
+    var address : String?
+    
+    var ifaddr : UnsafeMutablePointer<ifaddrs>?
+    guard getifaddrs(&ifaddr) == 0 else { return nil }
+    guard let firstAddr = ifaddr else { return nil }
+    
+    for ifptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+      let interface = ifptr.pointee
+      
+      let addrFamily = interface.ifa_addr.pointee.sa_family
+      if addrFamily == UInt8(AF_INET) || addrFamily == UInt8(AF_INET6) {
+        
+        // Check interface name:
+        // wifi = ["en0"]
+        // wired = ["en2", "en3", "en4"]
+        // cellular = ["pdp_ip0","pdp_ip1","pdp_ip2","pdp_ip3"]
+        let name = String(cString: interface.ifa_name)
+        if  name == "en0" || name == "en2" || name == "en3" || name == "en4" || name == "pdp_ip0" || name == "pdp_ip1" || name == "pdp_ip2" || name == "pdp_ip3" {
+          var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+          getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),
+                      &hostname, socklen_t(hostname.count),
+                      nil, socklen_t(0), NI_NUMERICHOST)
+          address = String(cString: hostname)
+        }
+      }
+    }
+    freeifaddrs(ifaddr)
+    
+    return address
   }
 }
 extension TurboDevice {
@@ -369,19 +385,75 @@ extension TurboDevice {
   }
   
   private func isPinOrFingerprintSet() -> Bool {
-    #if os(tvOS)
+#if os(tvOS)
     return false
+#else
+    return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
+#endif
+  }
+  
+  private func getFirstInstallTime() -> Int64? {
+    guard let path = FileManager.default.urls(for:
+        .documentDirectory,in:
+        .userDomainMask).last
+    else { return nil }
+    var installDate: Date?
+    do {
+      let attributesOfItem = try FileManager.default.attributesOfItem(atPath: path.absoluteString)
+      installDate = attributesOfItem[.creationDate] as? Date
+    } catch {
+      print("🐵 ---- error")
+    }
+    return Int64(installDate!.timeIntervalSince1970 * 1000)
+  }
+  
+  private func getFontScale() -> Double {
+    let contentSize = UIScreen.main.traitCollection.preferredContentSizeCategory
+    let fontScale = {
+      switch contentSize {
+      case .extraSmall:
+        return 0.82
+      case .small:
+        return 0.88
+      case .medium:
+        return 0.95
+      case .large:
+        return 1.0
+      case .extraLarge:
+        return 1.12
+      case .extraExtraLarge:
+        return 1.23
+      case .extraExtraExtraLarge:
+        return 1.35
+      case .accessibilityMedium:
+        return 1.64
+      case .accessibilityLarge:
+        return 1.95
+      case .accessibilityExtraLarge:
+        return 2.35
+      case .accessibilityExtraExtraLarge:
+        return 2.76
+      case .accessibilityExtraExtraExtraLarge:
+        return 3.12
+      default:
+        return 1.0
+      }
+    }()
+    return fontScale
+  }
+  
+  private func getBuildId() -> String {
+    #if os(tvOS)
+    return "unknown"
     #else
-    let context = LAContext()
-    return context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
+    let buildNumber = Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as! String
+    return buildNumber
     #endif
   }
   
-  private func getFirstInstallTime() {
-    let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last
-    let path = String(url)
-    let installDate: Date = FileManager.default.attributesOfItem(atPath: path)[.creationDate]
-    
-    return installDate.timeIntervalSince1970 * 1000
-  }
+  private func getUserAgent() -> String {
+    let userAgent = WKWebView().value(forKey: "userAgent") as! String
+    return userAgent
 }
+}
+
