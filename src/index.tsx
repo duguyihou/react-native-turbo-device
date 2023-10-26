@@ -44,3 +44,11 @@ export function getBatteryLevel(): Promise<number> {
 export function isBatteryCharging(): Promise<boolean> {
   return TurboDevice.isBatteryCharging();
 }
+
+export function getCarrier(): Promise<string> {
+  return TurboDevice.getCarrier();
+}
+
+export function getIpAddress(): Promise<string> {
+  return TurboDevice.getIpAddress();
+}

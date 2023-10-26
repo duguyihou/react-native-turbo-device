@@ -29,4 +29,12 @@ RCT_EXTERN_METHOD(getBatteryLevel:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(isBatteryCharging:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+# pragma mark network
+
+RCT_EXTERN_METHOD(getCarrier:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getIpAddress:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+
 @end

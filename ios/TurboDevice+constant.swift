@@ -92,3 +92,14 @@ extension TurboDevice {
     return UIScreen.main.scale != UIScreen.main.nativeScale
   }
 }
+
+extension TurboDevice {
+  private func getBuildId() -> String {
+    #if os(tvOS)
+    return "unknown"
+    #else
+    let buildNumber = Bundle.main.object(forInfoDictionaryKey: kCFBundleVersionKey as String) as! String
+    return buildNumber
+    #endif
+  }
+}
