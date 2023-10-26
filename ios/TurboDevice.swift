@@ -1,8 +1,6 @@
-import MachO
 import AVFoundation
 import CoreLocation
 #if !os(tvOS)
-import WebKit
 import LocalAuthentication
 #endif
 
@@ -82,13 +80,6 @@ extension TurboDevice {
 #else
     return false
 #endif
-  }
-}
-
-extension TurboDevice {
-  private func getSupportedAbis() -> String {
-    guard let archRaw = NXGetLocalArchInfo().pointee.name else { return "unknown" }
-    return String(cString: archRaw)
   }
 }
 

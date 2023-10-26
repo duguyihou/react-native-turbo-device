@@ -54,11 +54,19 @@ RCT_EXTERN_METHOD(getBrightness:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
 # pragma mark typography
+
 RCT_EXTERN_METHOD(getFontScale:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
 # pragma mark web
+
 RCT_EXTERN_METHOD(getUserAgent:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
+
+# pragma mark arch
+
+RCT_EXTERN_METHOD(getSupportedAbis:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
 
 @end

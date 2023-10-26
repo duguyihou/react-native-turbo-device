@@ -76,3 +76,7 @@ export function getFontScale(): Promise<number> {
 export function getUserAgent(): Promise<string> {
   return TurboDevice.getUserAgent();
 }
+
+export function getSupportedAbis(): Promise<string> {
+  return TurboDevice.getSupportedAbis();
+}
