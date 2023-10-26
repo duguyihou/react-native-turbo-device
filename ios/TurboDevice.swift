@@ -117,9 +117,6 @@ extension TurboDevice {
     return Int64(installDate!.timeIntervalSince1970 * 1000)
   }
   
-  private func getUserAgent() -> String {
-    let userAgent = WKWebView().value(forKey: "userAgent") as! String
-    return userAgent
-}
+
 }
 

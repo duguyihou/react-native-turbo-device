@@ -57,4 +57,8 @@ RCT_EXTERN_METHOD(getBrightness:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(getFontScale:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
+# pragma mark web
+RCT_EXTERN_METHOD(getUserAgent:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
 @end

@@ -72,3 +72,7 @@ export function getBrightness(): Promise<number> {
 export function getFontScale(): Promise<number> {
   return TurboDevice.getFontScale();
 }
+
+export function getUserAgent(): Promise<string> {
+  return TurboDevice.getUserAgent();
+}
