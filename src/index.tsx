@@ -52,3 +52,11 @@ export function getCarrier(): Promise<string> {
 export function getIpAddress(): Promise<string> {
   return TurboDevice.getIpAddress();
 }
+
+export function isLocationEnabled(): Promise<string> {
+  return TurboDevice.isLocationEnabled();
+}
+
+export function getAvailableLocationProviders(): Promise<string> {
+  return TurboDevice.getAvailableLocationProviders();
+}

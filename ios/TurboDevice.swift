@@ -86,7 +86,6 @@ extension TurboDevice {
   }
 }
 
-// MARK: - battery
 extension TurboDevice {
   
   @objc
@@ -131,35 +130,8 @@ extension TurboDevice {
     return String(cString: archRaw)
   }
 }
-// MARK: - location
-extension TurboDevice {
-  private func isLocationEnabled() -> Bool {
-    return CLLocationManager.locationServicesEnabled()
-  }
-  private func getAvailableLocationProviders() -> [String: Any] {
-#if !os(tvOS)
-    let locationServicesEnabled = isLocationEnabled()
-    let significantLocationChangeMonitoringAvailable = CLLocationManager.significantLocationChangeMonitoringAvailable()
-    let headingAvailable = CLLocationManager.headingAvailable()
-    let isRangingAvailable = CLLocationManager.isRangingAvailable()
-    return [
-      "locationServicesEnabled": locationServicesEnabled,
-      "significantLocationChangeMonitoringAvailable": significantLocationChangeMonitoringAvailable,
-      "headingAvailable": headingAvailable,
-      "isRangingAvailable": isRangingAvailable,
-    ]
-#else
-    let locationServicesEnabled = isLocationEnabled()
-    return [
-      "locationServicesEnabled": locationServicesEnabled,
-    ]
-#endif
-  }
-}
-
 
 extension TurboDevice {
-
   
   private func isPinOrFingerprintSet() -> Bool {
 #if os(tvOS)
