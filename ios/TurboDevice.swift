@@ -7,29 +7,6 @@ import WebKit
 import LocalAuthentication
 #endif
 
-enum DeviceType: String {
-  case Handset = "Handset"
-  case Tablet = "Tablet"
-  case Tv = "Tv"
-  case Desktop = "Desktop"
-  case Unknown = "Unknown"
-  
-  func getDeviceTypeName() -> String {
-    switch self {
-    case .Handset:
-      return DeviceType.Handset.rawValue
-    case .Tablet:
-      return DeviceType.Tablet.rawValue
-    case .Tv:
-      return DeviceType.Tv.rawValue
-    case .Desktop:
-      return DeviceType.Desktop.rawValue
-    default:
-      return DeviceType.Unknown.rawValue
-    }
-  }
-}
-
 @objc(TurboDevice)
 class TurboDevice: RCTEventEmitter {
   
@@ -99,56 +76,13 @@ class TurboDevice: RCTEventEmitter {
 }
 
 extension TurboDevice {
-  private func getBundleId() -> Any {
-    let buildId = Bundle.main.object(forInfoDictionaryKey: "CFBundleIdentifier")
-    return buildId ?? "unknown"
-  }
-  
-  private func getSystemName() -> Any {
-    return UIDevice.current.systemName
-  }
-  
-  private func getSystemVersion() -> Any {
-    return UIDevice.current.systemVersion
-  }
-  private func getAppVersion() -> Any {
-    let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString")
-    return appVersion ?? "unknown"
-  }
-  
-  private func getBuildNumber() -> Any {
-    let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion")
-    return buildNumber ?? "unknown"
-  }
-  
-  private func isTablet() -> Bool {
-    return getDeviceType() == .Tablet
-  }
-  
+
   private func isEmulator() -> Bool {
 #if targetEnvironment(simulator)
     return true
 #else
     return false
 #endif
-  }
-  
-  private func getAppName() -> Any {
-    let displayName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName")
-    let bundleName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName")!
-    
-    return displayName ?? bundleName
-  }
-  
-  private func getDeviceTypeName() -> Any {
-    let deviceType = getDeviceType()
-    let deviceTypeName = DeviceType.getDeviceTypeName(deviceType)
-    return deviceTypeName
-  }
-  
-  // TODO: - 🐵 use scene
-  private func isDisplayZoomed() -> Bool {
-    return UIScreen.main.scale != UIScreen.main.nativeScale
   }
 }
 
@@ -161,8 +95,6 @@ extension TurboDevice {
     sendEvent(withName: "TurboDevice_headphoneConnectionDidChange", body: [isConnected])
     
   }
-  
-
   
   private func isHeadphonesConnected() -> Bool {
     let currentRoute = AVAudioSession.sharedInstance().currentRoute
@@ -190,27 +122,6 @@ extension TurboDevice {
 #else
     return CGFloat(-1)
 #endif
-  }
-}
-
-// MARK: - storage
-extension TurboDevice {
-  private func getTotalMemory() -> Double {
-    let totalMemory = ProcessInfo.processInfo.physicalMemory
-    return Double(totalMemory)
-  }
-  private func getUsedMemory() -> UInt64 {
-    var taskInfo = mach_task_basic_info()
-    var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
-    let kerr: kern_return_t = withUnsafeMutablePointer(to: &taskInfo) {
-      $0.withMemoryRebound(to: integer_t.self, capacity: 1) {
-        task_info(mach_task_self_, task_flavor_t(MACH_TASK_BASIC_INFO), $0, &count)
-      }
-    }
-    if  kerr != KERN_SUCCESS {
-      return 0
-    }
-    return UInt64(taskInfo.resident_size)
   }
 }
 
@@ -294,29 +205,7 @@ extension TurboDevice {
   }
 }
 extension TurboDevice {
-  private func getDeviceType() -> DeviceType {
-    let userInterfaceIdiom = UIDevice.current.userInterfaceIdiom
-    switch userInterfaceIdiom {
-    case .phone:
-      return .Handset
-    case .pad:
-#if targetEnvironment(macCatalyst)
-      return .Desktop
-#endif
-      if #available(iOS 14, *) {
-        if ProcessInfo.processInfo.isiOSAppOnMac {
-          return .Desktop
-        }
-      }
-      return .Tablet
-    case .tv:
-      return .Tv
-    case .mac:
-      return .Desktop
-    default:
-      return .Unknown
-    }
-  }
+
   
   private func isPinOrFingerprintSet() -> Bool {
 #if os(tvOS)
