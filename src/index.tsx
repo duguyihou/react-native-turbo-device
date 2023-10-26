@@ -64,3 +64,7 @@ export function getAvailableLocationProviders(): Promise<Array<string>> {
 export function isHeadphonesConnected(): Promise<boolean> {
   return TurboDevice.isHeadphonesConnected();
 }
+
+export function getBrightness(): Promise<number> {
+  return TurboDevice.getBrightness();
+}

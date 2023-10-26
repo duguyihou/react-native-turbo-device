@@ -1,4 +1,5 @@
 import MachO
+import AVFoundation
 import CoreLocation
 #if !os(tvOS)
 import WebKit
@@ -86,22 +87,7 @@ extension TurboDevice {
 
 
 
-// MARK: - brightness
-extension TurboDevice {
-  @objc
-  private func brightnessDidChange() {
-    let brightness = getBrightness()
-    sendEvent(withName: "TurboDevice_brightnessDidChange", body: [brightness])
-  }
-  
-  private func getBrightness() -> CGFloat {
-#if !os(tvOS)
-    return UIScreen.main.brightness
-#else
-    return CGFloat(-1)
-#endif
-  }
-}
+
 
 extension TurboDevice {
   private func getSupportedAbis() -> String {

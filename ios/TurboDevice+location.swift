@@ -11,7 +11,7 @@ extension TurboDevice {
   
   @objc
   func getAvailableLocationProviders(_ resolve: @escaping RCTPromiseResolveBlock,
-                                             reject: @escaping RCTPromiseRejectBlock) {
+                                     reject: @escaping RCTPromiseRejectBlock) {
 #if !os(tvOS)
     let locationServicesEnabled = CLLocationManager.locationServicesEnabled()
     let significantLocationChangeMonitoringAvailable = CLLocationManager.significantLocationChangeMonitoringAvailable()

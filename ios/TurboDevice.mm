@@ -48,4 +48,8 @@ RCT_EXTERN_METHOD(getAvailableLocationProviders:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(isHeadphonesConnected:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 
+# pragma mark brightness
+
+RCT_EXTERN_METHOD(getBrightness:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 @end
