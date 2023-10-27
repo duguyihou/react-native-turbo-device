@@ -2,32 +2,28 @@ import Foundation
 import AVFoundation
 
 extension TurboDevice {
-  @objc
-  func isHeadphonesConnected(_ resolve: @escaping RCTPromiseResolveBlock,
-                               reject: @escaping RCTPromiseRejectBlock) {
+  
+  private var isHeadphonesConnected: Bool {
     let currentRoute = AVAudioSession.sharedInstance().currentRoute
     for desc in currentRoute.outputs {
       let portType = desc.portType
       if portType == .headphones || portType == .bluetoothA2DP || portType == .bluetoothHFP {
-        resolve(true)
+        return true
       }
     }
-    resolve(false)
+    return false
+  }
+  
+  @objc
+  func isHeadphonesConnected(_ resolve: @escaping RCTPromiseResolveBlock,
+                             reject: @escaping RCTPromiseRejectBlock) {
+    resolve(isHeadphonesConnected)
   }
   
   @objc
   func headphoneConnectionDidChange() {
-    let isConnected = {
-      let currentRoute = AVAudioSession.sharedInstance().currentRoute
-      for desc in currentRoute.outputs {
-        let portType = desc.portType
-        if portType == .headphones || portType == .bluetoothA2DP || portType == .bluetoothHFP {
-          return true
-        }
-      }
-      return false
-    }()
-    sendEvent(withName: "TurboDevice_headphoneConnectionDidChange", body: [isConnected])
+    sendEvent(withName: "TurboDevice_headphoneConnectionDidChange",
+              body: ["isConnected": isHeadphonesConnected])
   }
-
+  
 }

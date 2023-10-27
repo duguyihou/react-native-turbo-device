@@ -45,6 +45,10 @@ export function isBatteryCharging(): Promise<boolean> {
   return TurboDevice.isBatteryCharging();
 }
 
+export function getPowerState(): Promise<Record<string, any>> {
+  return TurboDevice.getPowerState();
+}
+
 export function getCarrier(): Promise<string> {
   return TurboDevice.getCarrier();
 }
@@ -89,6 +93,30 @@ export function isEmulator(): Promise<boolean> {
   return TurboDevice.isEmulator();
 }
 
+export function getInstallerPackageName(): Promise<number> {
+  return TurboDevice.getInstallerPackageName();
+}
+
 export function getFirstInstallTime(): Promise<number> {
   return TurboDevice.getFirstInstallTime();
+}
+
+export function getDeviceToken(): Promise<string> {
+  return TurboDevice.getDeviceToken();
+}
+
+export function getUniqueId(): Promise<string> {
+  return TurboDevice.getUniqueId();
+}
+
+export function syncUniqueId(): Promise<string> {
+  return TurboDevice.syncUniqueId();
+}
+
+export function getDeviceName(): Promise<string> {
+  return TurboDevice.getDeviceName();
+}
+
+export function getBuildNumber(): Promise<string> {
+  return TurboDevice.getBuildNumber();
 }

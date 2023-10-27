@@ -2,18 +2,22 @@ import Foundation
 import CoreTelephony
 
 extension TurboDevice {
-  func getCarrier(_ resolve: @escaping RCTPromiseResolveBlock,
-                  reject: @escaping RCTPromiseRejectBlock) {
+  private var carrier: String {
 #if os(tvOS) || targetEnvironment(macCatalyst)
-    resolve("unknown")
+    return "unknown"
 #else
     let netInfo = CTTelephonyNetworkInfo()
     if #available(iOS 12.0, *) {
-      resolve(netInfo.serviceSubscriberCellularProviders?.first?.value.carrierName ?? "unknown")
+      return netInfo.serviceSubscriberCellularProviders?.first?.value.carrierName ?? "unknown"
     } else {
-      resolve(netInfo.subscriberCellularProvider?.carrierName ?? "unknown")
+      return netInfo.subscriberCellularProvider?.carrierName ?? "unknown"
     }
 #endif
+    
+  }
+  func getCarrier(_ resolve: @escaping RCTPromiseResolveBlock,
+                  reject: @escaping RCTPromiseRejectBlock) {
+    resolve(carrier)
   }
   
   // copy from https://stackoverflow.com/a/73853838

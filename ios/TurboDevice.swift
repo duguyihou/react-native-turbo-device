@@ -19,19 +19,22 @@ class TurboDevice: RCTEventEmitter {
   }
   
   override func constantsToExport() -> [AnyHashable : Any]! {
+    let deviceId = UIDevice.identifer
+    let model = UIDevice.modelName
+    let brand = "Apple"
     return [
-      "deviceId": UIDevice.identifer,
-      "model": UIDevice.modelName,
-      "bundleId": getBundleId(),
-      "systemName": getSystemName(),
-      "systemVersion": getSystemVersion(),
-      "appVersion": getAppVersion(),
-      "buildNumber": getBuildNumber(),
-      "isTablet": isTablet(),
-      "appName": getAppName(),
-      "brand": "Apple",
-      "deviceType": getDeviceTypeName(),
-      "isDisplayZoomed": isDisplayZoomed(),
+      "deviceId": deviceId,
+      "model": model,
+      "bundleId": bundleId,
+      "systemName": systemName,
+      "systemVersion": systemVersion,
+      "appVersion": appVersion,
+      "buildNumber": buildNumber,
+      "isTablet": isTablet,
+      "appName": appName,
+      "brand": brand,
+      "deviceType": deviceTypeName,
+      "isDisplayZoomed": isDisplayZoomed,
     ];
   }
   
@@ -79,26 +82,6 @@ extension TurboDevice {
 #else
     resolve(false)
 #endif
-  }
-}
-
-// MARK: - getFirstInstallTime
-extension TurboDevice {
-  @objc
-  func getFirstInstallTime(_ resolve: @escaping RCTPromiseResolveBlock,
-                           reject: @escaping RCTPromiseRejectBlock) {
-    guard let path = FileManager.default.urls(for:
-        .documentDirectory,in:
-        .userDomainMask).last
-    else { return reject("getFirstInstallTime", nil, nil) }
-    var installDate: Date?
-    do {
-      let attributesOfItem = try FileManager.default.attributesOfItem(atPath: path.absoluteString)
-      installDate = attributesOfItem[.creationDate] as? Date
-    } catch {
-      reject("getFirstInstallTime", nil, nil)
-    }
-    resolve(Int64(installDate!.timeIntervalSince1970 * 1000))
   }
 }
 

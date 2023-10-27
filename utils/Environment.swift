@@ -1,7 +1,7 @@
 import Foundation
 
 enum MSACEnvironment: Int {
-  case AppStore
+  case AppStore = 0
   case TestFlight
   case Other
 }
