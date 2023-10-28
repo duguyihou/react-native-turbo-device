@@ -4,18 +4,25 @@ import Security
 class DeviceUID: NSObject {
   private var uidString: String?
   private let UIDKey = "deviceUID"
+  private var appleIFV: String? {
+    return UIDevice.current.identifierForVendor?.uuidString
+  }
   
-  func uid() -> String {
+  private var randomUUID: String {
+    return UUID().uuidString
+  }
+  
+  var uid: String {
     uidString = DeviceUID.getValueForKeychain(by: UIDKey, in: UIDKey)
     ?? DeviceUID.getValueForUserDefaults(by: UIDKey)
-    ?? DeviceUID.appleIFV()
-    ?? DeviceUID.randomUUID()
+    ?? appleIFV
+    ?? randomUUID
     saveIfNeed()
     return uidString!
   }
   
-  func syncUid() -> String {
-    uidString = DeviceUID.appleIFV() ?? DeviceUID.randomUUID()
+  var syncUid: String {
+    uidString = appleIFV ?? randomUUID
     save()
     return uidString!
   }
@@ -110,15 +117,5 @@ extension DeviceUID {
   private static func getValueForUserDefaults(by key: String) -> String? {
     let defaults = UserDefaults.standard
     return defaults.string(forKey: key)
-  }
-}
-// MARK: - UID Generation
-extension DeviceUID {
-  private static func appleIFV() -> String? {
-    return UIDevice.current.identifierForVendor?.uuidString
-  }
-  
-  private static func randomUUID() -> String {
-    return UUID().uuidString
   }
 }

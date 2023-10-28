@@ -28,6 +28,8 @@ RCT_EXTERN_METHOD(getBatteryLevel:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 RCT_EXTERN_METHOD(isBatteryCharging:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getPowerState:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 
 # pragma mark network
 
@@ -73,11 +75,26 @@ RCT_EXTERN_METHOD(getSupportedAbis:(RCTPromiseResolveBlock)resolve
 RCT_EXTERN_METHOD(isPinOrFingerprintSet:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
+# pragma mark install
+
+RCT_EXTERN_METHOD(getInstallerPackageName:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getFirstInstallTime:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+
 # pragma mark others
 
 RCT_EXTERN_METHOD(isEmulator:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
-RCT_EXTERN_METHOD(getFirstInstallTime:(RCTPromiseResolveBlock)resolve
+RCT_EXTERN_METHOD(getDeviceToken:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getUniqueId:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(syncUniqueId:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getDeviceName:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getBuildNumber:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
 @end

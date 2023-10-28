@@ -2,9 +2,15 @@ import Foundation
 import MachO
 
 extension TurboDevice {
-  private func getSupportedAbis(_ resolve: @escaping RCTPromiseResolveBlock,
-                                reject: @escaping RCTPromiseRejectBlock) {
-    guard let archRaw = NXGetLocalArchInfo().pointee.name else { return resolve("unknown") }
-    resolve(String(cString: archRaw))
+  
+  private var supportedAbis: String {
+    guard let archRaw = NXGetLocalArchInfo().pointee.name else { return "unknown" }
+    return String(cString: archRaw)
+  }
+  
+  @objc
+  func getSupportedAbis(_ resolve: @escaping RCTPromiseResolveBlock,
+                        reject: @escaping RCTPromiseRejectBlock) {
+    resolve(supportedAbis)
   }
 }

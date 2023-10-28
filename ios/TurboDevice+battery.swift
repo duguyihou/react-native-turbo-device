@@ -43,9 +43,16 @@ extension TurboDevice {
 #endif
   }
   
+  var batteryLevel: Float {
+#if os(tvOS)
+    return Float(1)
+#else
+    return UIDevice.current.batteryLevel
+#endif
+  }
+  
   @objc
   func batteryLevelDidChange(_ notification: Notification) {
-    let batteryLevel = UIDevice.current.batteryLevel
     sendEvent(withName: "TurboDevice_batteryLevelDidChange", body: [batteryLevel])
     
     if batteryLevel <= kLowBatteryThreshold {
@@ -56,11 +63,7 @@ extension TurboDevice {
   @objc
   private func getBatteryLevel(_ resolve: @escaping RCTPromiseResolveBlock,
                                reject: @escaping RCTPromiseRejectBlock) {
-#if os(tvOS)
-    resolve(Float(1))
-#else
-    resolve(UIDevice.current.batteryLevel)
-#endif
+    resolve(batteryLevel)
   }
   
   @objc
@@ -75,5 +78,11 @@ extension TurboDevice {
     else { return reject("isBatteryCharging failed", nil, nil)}
     let isCharging = batteryState == .charging
     resolve(isCharging)
+  }
+  
+  @objc
+  func getPowerState(_ resolve: @escaping RCTPromiseResolveBlock,
+                     reject: @escaping RCTPromiseRejectBlock) {
+    resolve(powerState)
   }
 }

@@ -2,16 +2,13 @@ import Foundation
 import CoreLocation
 
 extension TurboDevice {
-  @objc
-  func isLocationEnabled(_ resolve: @escaping RCTPromiseResolveBlock,
-                         reject: @escaping RCTPromiseRejectBlock) {
+  
+  private var isLocationEnabled: Bool {
     let enabled = CLLocationManager.locationServicesEnabled()
-    resolve(enabled)
+    return enabled
   }
   
-  @objc
-  func getAvailableLocationProviders(_ resolve: @escaping RCTPromiseResolveBlock,
-                                     reject: @escaping RCTPromiseRejectBlock) {
+  private var availableLocationProviders: [String: Bool] {
 #if !os(tvOS)
     let locationServicesEnabled = CLLocationManager.locationServicesEnabled()
     let significantLocationChangeMonitoringAvailable = CLLocationManager.significantLocationChangeMonitoringAvailable()
@@ -23,13 +20,25 @@ extension TurboDevice {
       "headingAvailable": headingAvailable,
       "isRangingAvailable": isRangingAvailable,
     ]
-    resolve(providers)
+    return providers
 #else
     let locationServicesEnabled = isLocationEnabled()
     let providers = [
       "locationServicesEnabled": locationServicesEnabled,
     ]
-    resolve(providers)
+    return providers
 #endif
+  }
+  
+  @objc
+  func isLocationEnabled(_ resolve: @escaping RCTPromiseResolveBlock,
+                         reject: @escaping RCTPromiseRejectBlock) {
+    resolve(isLocationEnabled)
+  }
+  
+  @objc
+  func getAvailableLocationProviders(_ resolve: @escaping RCTPromiseResolveBlock,
+                                     reject: @escaping RCTPromiseRejectBlock) {
+    resolve(availableLocationProviders)
   }
 }

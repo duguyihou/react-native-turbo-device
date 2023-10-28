@@ -4,13 +4,18 @@ import LocalAuthentication
 #endif
 
 extension TurboDevice {
-  private func isPinOrFingerprintSet(_ resolve: @escaping RCTPromiseResolveBlock,
-                                     reject: @escaping RCTPromiseRejectBlock) {
+  private var isPinOrFingerprintSet: Bool {
 #if os(tvOS)
-    resolve(false)
+    return false
 #else
     let evaluated = LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
-    resolve(evaluated)
+    return evaluated
 #endif
+  }
+  
+  @objc
+  func isPinOrFingerprintSet(_ resolve: @escaping RCTPromiseResolveBlock,
+                             reject: @escaping RCTPromiseRejectBlock) {
+    resolve(isPinOrFingerprintSet)
   }
 }

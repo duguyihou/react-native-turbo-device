@@ -1,6 +1,14 @@
 import Foundation
 
 extension TurboDevice {
+  
+  private var brightness: Float {
+#if !os(tvOS)
+    return Float(UIScreen.main.brightness)
+#else
+    return CGFloat(-1)
+#endif
+  }
   @objc
   func brightnessDidChange() {
     let brightness = UIScreen.main.brightness
@@ -10,10 +18,6 @@ extension TurboDevice {
   @objc
   func getBrightness(_ resolve: @escaping RCTPromiseResolveBlock,
                      reject: @escaping RCTPromiseRejectBlock) {
-#if !os(tvOS)
-    resolve(UIScreen.main.brightness)
-#else
-    resolve(CGFloat(-1))
-#endif
+    resolve(brightness)
   }
 }
