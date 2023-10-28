@@ -136,14 +136,14 @@ extension TurboDevice {
   @objc
   func getUniqueId(_ resolve: @escaping RCTPromiseResolveBlock,
                    reject: @escaping RCTPromiseRejectBlock) {
-    let uniqueId = DeviceUID().uid()
+    let uniqueId = DeviceUID().uid
     resolve(uniqueId)
   }
   
   @objc
   func syncUniqueId(_ resolve: @escaping RCTPromiseResolveBlock,
                     reject: @escaping RCTPromiseRejectBlock) {
-    let uniqueId = DeviceUID().syncUid()
+    let uniqueId = DeviceUID().syncUid
     resolve(uniqueId)
   }
   
