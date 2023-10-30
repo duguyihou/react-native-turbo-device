@@ -17,10 +17,6 @@ const TurboDevice = NativeModules.TurboDevice
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return TurboDevice.multiply(a, b);
-}
-
 export function getTotalDiskCapacity(): Promise<number> {
   return TurboDevice.getTotalDiskCapacity();
 }
