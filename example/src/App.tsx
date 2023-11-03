@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text } from 'react-native';
-import { getTotalDiskCapacity } from 'react-native-turbo-device';
+import TurboDevice from '../../src/TurboDevice';
 
 export default function App() {
   const [totalDiskCapacity, setTotalDiskCapacity] = React.useState<
@@ -10,7 +10,7 @@ export default function App() {
 
   React.useEffect(() => {
     const a = async () => {
-      const total = await getTotalDiskCapacity();
+      const total = await TurboDevice.getTotalDiskCapacity();
       setTotalDiskCapacity(total);
     };
     a();
